@@ -6,5 +6,5 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **options):
 		zd = ZDaemon()
-		zaddrs = zd.z_listaddresses()
-		zd.sweep_coinbase(zaddrs[0])
+		unified = zd.z_listaccounts()
+		zd.sweep_coinbase(unified[0]['addresses'][0]['ua'])

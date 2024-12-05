@@ -15,30 +15,10 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-ENVIRONMENT = os.getenv('DJANGO_ENVIRONMENT', 'prod')
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
-# ENVIRONMENT = os.getenv('DJANGO_ENVIRONMENT', 'dev')
-if ENVIRONMENT not in ['dev', 'stage', 'prod']:
-        raise Exception('Unknown settings environment "%s"' % ENVIRONMENT)
-print 'settings environment is ' + ENVIRONMENT
-
-# SECURITY WARNING: keep the secret key used in production secret!
-#if ENVIRONMENT == 'prod':
-#        SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
-#else:
-
-# These secrets are written by Ansible during provisioning.
-SECRET_KEY = ''
-DJANGO_POSTGRESQL_PASSWORD = ''
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = ENVIRONMENT == 'dev'
-
+DEBUG = False
 
 # production
-ALLOWED_HOSTS = ['faucet.testnet.z.cash', '127.0.0.1']
+ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1']
 
 # Application definition
 
@@ -82,57 +62,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'zfaucet.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-if ENVIRONMENT == 'dev':
-        DATABASES = {
-                'default': {
-                        'ENGINE': 'django.db.backends.sqlite3',
-                        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-                        'OPTIONS': {
-                                'timeout': 10,
-                        },
-                },
-        }
-else:
-        # prod and stage
-        DATABASES = {
-                'default': {
-                        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-                        'NAME': 'django',
-                        'USER': 'django',
-                        'PASSWORD': DJANGO_POSTGRESQL_PASSWORD,
-                        'HOST': '127.0.0.1',
-                        'PORT': '5432',
-                        'CONN_MAX_AGE': 3600,
-                },
-        }
-
-
-
-# Password validation
-# https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
-
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'OPTIONS': {
+            'timeout': 10,
+        },
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+}
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/1.10/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
@@ -150,4 +92,13 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-STATIC_ROOT = '/home/zcash/faucet/faucet/static'
+STATIC_ROOT = '/zfaucet/faucet/static'
+
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+    'http://127.0.0.1'
+]
+
+SECRET_KEY = "s3cr3t"
