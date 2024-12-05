@@ -15,7 +15,7 @@ while true; do
     if echo "$PROGRESS" | grep -qE '^[0-9]+(\.[0-9]+)?$'; then
         if [ "$(echo "$PROGRESS >= 0.999" | bc -l)" -eq 1 ]; then
             echo "Zcash indexing is complete (verificationprogress: $PROGRESS)."
-            exit 0
+            break
         else
             echo "Waiting for Zcash to complete indexing... Current progress: $PROGRESS"
         fi
