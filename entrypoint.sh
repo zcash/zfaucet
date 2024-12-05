@@ -2,19 +2,26 @@
 
 set -e  # Exit immediately if a command exits with a non-zero status
 
-#set up db and static
-python /zfaucet/manage.py migrate
-python /zfaucet/manage.py makemigrations
-python /zfaucet/manage.py collectstatic --noinput
+# If arguments are passed to the script, run them instead of the default commands
+if [[ $# -gt 0 ]]; then
+  exec "$@"
+else
+  # Default behavior: set up database, static files, and run the app
+  echo "Running migrations..."
+  python /zfaucet/manage.py migrate
 
-# Run the health check
-echo "Running healthcheck..."
-python /zfaucet/manage.py healthcheck
+  echo "Making migrations..."
+  python /zfaucet/manage.py makemigrations
 
-# Run sweepfunds
-echo "Running sweepfunds..."
-python /zfaucet/manage.py sweepfunds
+  echo "Collecting static files..."
+  python /zfaucet/manage.py collectstatic --noinput
 
-# Start Gunicorn with two workers
-echo "Starting Gunicorn..."
-gunicorn --workers=2 zfaucet.wsgi
+  echo "Running healthcheck..."
+  python /zfaucet/manage.py healthcheck
+
+  echo "Running sweepfunds..."
+  python /zfaucet/manage.py sweepfunds
+
+  echo "Starting Gunicorn..."
+  exec gunicorn --workers=2 zfaucet.wsgi
+fi
